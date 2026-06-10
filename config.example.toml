@@ -1,0 +1,38 @@
+[network]
+http_addrs = ["IP:PORT"] # List of addresses and ports for plain HTTP requests
+https_addrs = ["IP:PORT"] # List of addresses and ports for TLS (HTTPS) requests
+max_connections = 10000 # Maximum number of simultaneous connections allowed globally
+
+[timeout]
+c_tls_handshake = 5 # Timeout for completing the TLS handshake (seconds)
+c_header_read = 10 # Timeout for reading all HTTP headers (seconds)
+c_keep_alive_idle = 60 # Idle time allowed for keep-alive connections (seconds)
+c_keep_alive_timeout = 20 # Total duration a keep-alive connection can be maintained (seconds)
+c_body_timeout = 30 # Timeout for reading the entire request body (seconds)
+s_connect = 5 # Timeout for connecting to the backend server (seconds)
+s_response = 30 # Timeout for waiting for a response from the backend (seconds)
+s_websocket_idle = 3600 # Maximum idle time for WebSocket connections (seconds)
+
+[limit]
+max_uri_size = 2048 # Maximum allowed URI length (bytes)
+max_header_size = 16384 # Maximum size of a single header field (bytes)
+max_header_count = 100 # Maximum number of headers allowed
+max_body_size = 10485760 # Maximum allowed request body size (bytes)
+c_h2_max_streams = 100 # Maximum concurrent streams for HTTP/2
+max_rps = 50 # Maximum requests per second (RPS) per IP
+max_bandwidth = 10485760 # Maximum bandwidth per IP (bytes/second)
+
+[ban]
+ban_timeout = 60 # Ban duration for frequent timeouts (seconds)
+ban_protocol = 300 # Ban duration for protocol violations (e.g., Request Smuggling) (seconds)
+ban_waf = 3600 # Ban duration for WAF signature (attack pattern) detection (seconds)
+ban_rate_limit = 300 # Ban duration for exceeding rate limits (seconds)
+
+# Virtual Host and Routing Configuration
+[[vhosts]]
+domain = "example.com" # The actual domain name to serve
+key_path = "./certs/server.key" # Path to the TLS private key (.key) for this domain
+cert_path = "./certs/server.pem" # Path to the TLS certificate (.pem) for this domain
+
+[vhosts.routers] # Routing per path within the domain
+"/" = ["IP:PORT", "IP:PORT"] # List of backend servers to handle requests for "/" (Load Balancing)
